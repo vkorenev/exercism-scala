@@ -131,56 +131,47 @@ class ForthTest extends FunSuite with Matchers {
   }
 
   test("user-defined words - can consist of built-in words") {
-    pending
     forth
       .eval(": dup-twice dup dup ; 1 dup-twice")
       .fold(_ => "", _.toString) should be("1 1 1")
   }
 
   test("user-defined words - execute in the right order") {
-    pending
     forth.eval(": countup 1 2 3 ; countup").fold(_ => "", _.toString) should be(
       "1 2 3")
   }
 
   test("user-defined words - can override other user-defined words") {
-    pending
     forth
       .eval(": foo dup ; : foo dup dup ; 1 foo")
       .fold(_ => "", _.toString) should be("1 1 1")
   }
 
   test("user-defined words - can override built-in words") {
-    pending
     forth.eval(": swap dup ; 1 swap").fold(_ => "", _.toString) should be("1 1")
   }
 
   test("user-defined words - can override built-in operators") {
-    pending
     forth.eval(": + * ; 3 4 +").fold(_ => "", _.toString) should be("12")
   }
 
   test("user-defined words - can use different words with the same name") {
-    pending
     forth
       .eval(": foo 5 ; : bar foo ; : foo 6 ; bar foo")
       .fold(_ => "", _.toString) should be("5 6")
   }
 
   test("user-defined words - can define word that uses word with the same name") {
-    pending
     forth
       .eval(": foo 10 ; : foo foo 1 + ; foo")
       .fold(_ => "", _.toString) should be("11")
   }
 
   test("user-defined words - cannot redefine numbers") {
-    pending
     forth.eval(": 1 2 ;").isLeft should be(true)
   }
 
   test("user-defined words - errors if executing a non-existent word") {
-    pending
     forth.eval("foo").isLeft should be(true)
   }
 
@@ -204,13 +195,11 @@ class ForthTest extends FunSuite with Matchers {
   }
 
   test("case-insensitivity - user-defined words are case-insensitive") {
-    pending
     forth.eval(": foo dup ; 1 FOO Foo foo").fold(_ => "", _.toString) should be(
       "1 1 1 1")
   }
 
   test("case-insensitivity - definitions are case-insensitive") {
-    pending
     forth
       .eval(": SWAP DUP Dup dup ; 1 swap")
       .fold(_ => "", _.toString) should be("1 1 1 1")
