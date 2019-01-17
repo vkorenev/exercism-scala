@@ -51,7 +51,6 @@ class SgfTest extends FunSuite with Matchers {
   }
 
   test("""parse "(;A[\\]b\nc\\\nd\t\te\\\\ \\\n\\]])"""") {
-    pending
     Sgf.parseSgf("(;A[\\]b\nc\\\nd\t\te\\\\ \\\n\\]])") should be (
         Some(Node(Map("A" -> List("]b cd  e\\ ]")))))
   }

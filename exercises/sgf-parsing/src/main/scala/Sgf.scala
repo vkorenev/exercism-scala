@@ -14,7 +14,18 @@ object Sgf {
   // Keys may have multiple values associated with them.
   type SgfNode = Map[String, List[String]]
 
-  def text[_: P]: P[String] = P((CharIn("A-Z") | CharIn("a-z")).rep.!)
+  def escapedChar[_: P]: P[String] =
+    P("\\" ~ AnyChar.!.map {
+      case "\n"                          => ""
+      case s if s.charAt(0).isWhitespace => " "
+      case s                             => s
+    })
+  def char[_: P]: P[String] =
+    P(CharPred(_ != ']').!.map {
+      case s if s.charAt(0).isWhitespace => " "
+      case s                             => s
+    })
+  def text[_: P]: P[String] = P((escapedChar | char).rep.map(_.mkString))
   def propValue[_: P]: P[String] = P("[" ~/ text ~ "]")
   def propIdent[_: P]: P[String] = P(CharIn("A-Z").rep(1).!)
   def property[_: P]: P[(String, List[String])] = P(propIdent ~ propValue.rep(1).map(_.toList))
