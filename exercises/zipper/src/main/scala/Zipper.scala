@@ -2,17 +2,17 @@ import scala.annotation.tailrec
 
 object Zipper {
   // A zipper for a binary tree.
-  type Zipper[A] = (BinTree[A], Ctx[A])
+  type Zipper[+A] = (BinTree[A], Ctx[A])
 
   // Get a zipper focussed on the root node.
-  def fromTree[A](bt: BinTree[A]): Zipper[A] = (bt, EmptyCtx())
+  def fromTree[A](bt: BinTree[A]): Zipper[A] = (bt, EmptyCtx)
 
   // Get the complete tree from a zipper.
   @tailrec
   def toTree[A](zipper: Zipper[A]): BinTree[A] = zipper match {
     case (tree, LeftCtx(value, left, upper))   => toTree((BinTree(value, left, Some(tree)), upper))
     case (tree, RightCtx(value, right, upper)) => toTree((BinTree(value, Some(tree), right), upper))
-    case (tree, EmptyCtx())                    => tree
+    case (tree, EmptyCtx)                      => tree
   }
 
   // Get the value of the focus node.
@@ -32,7 +32,7 @@ object Zipper {
   def up[A](zipper: Zipper[A]): Option[Zipper[A]] = zipper match {
     case (tree, LeftCtx(value, left, upper))   => Some((BinTree(value, left, Some(tree)), upper))
     case (tree, RightCtx(value, right, upper)) => Some((BinTree(value, Some(tree), right), upper))
-    case (_, EmptyCtx())                       => None
+    case (_, EmptyCtx)                         => None
   }
 
   // Set the value of the focus node.
@@ -52,12 +52,12 @@ object Zipper {
 }
 
 // A binary tree.
-case class BinTree[A](value: A, left: Option[BinTree[A]], right: Option[BinTree[A]])
+case class BinTree[+A](value: A, left: Option[BinTree[A]], right: Option[BinTree[A]])
 
-sealed trait Ctx[A]
+sealed trait Ctx[+A]
 
-final case class LeftCtx[A](value: A, left: Option[BinTree[A]], upper: Ctx[A]) extends Ctx[A]
+final case class LeftCtx[+A](value: A, left: Option[BinTree[A]], upper: Ctx[A]) extends Ctx[A]
 
-final case class RightCtx[A](value: A, right: Option[BinTree[A]], upper: Ctx[A]) extends Ctx[A]
+final case class RightCtx[+A](value: A, right: Option[BinTree[A]], upper: Ctx[A]) extends Ctx[A]
 
-final case class EmptyCtx[A]() extends Ctx[A]
+object EmptyCtx extends Ctx[Nothing]
